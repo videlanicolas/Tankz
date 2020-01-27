@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Player1Barrel
   - Player1Pivot
+  - Player1Spawn
   layers:
   - Default
   - TransparentFX
