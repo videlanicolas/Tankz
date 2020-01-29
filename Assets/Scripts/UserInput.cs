@@ -14,9 +14,11 @@ public class UserInput : MonoBehaviour
     public Transform bulletSpawn;
     [Range(0.1f, 2.0f)]
     public float speed = 0.1f;
+    [Range(1.0f, 10.0f)]
+    public float powerMultiplier = 8.0f;
     public float bulletTimeToLive = 10.0f;
     [Range(1.0f, 10.0f)]
-    public float maxPower = 1.0f;
+    public float maxPower = 10.0f;
     [Space]
 
     private Tank player1;
@@ -36,9 +38,6 @@ public class UserInput : MonoBehaviour
         float verticalButton = Input.GetAxis("Vertical");
         bool fire1Down = Input.GetButtonDown("Fire1"),
              fire1Up = Input.GetButtonUp("Fire1");
-        //Debug.Log("verticalButton: " + verticalButton);
-        //Debug.Log("fire1: " + fire1);
-        //Debug.Log("player1Barrel.transform.rotation.z: " + player1Barrel.transform.rotation.z);
 
         this.player1.Move(horizontalButton * 0.1f);
         this.player1.Aim(verticalButton);
@@ -48,14 +47,17 @@ public class UserInput : MonoBehaviour
         }
 
         if (charge) {
-            power += Time.deltaTime;
-            Mathf.Clamp(power, 0.0f, this.maxPower);
+            power += Time.deltaTime * powerMultiplier;
+            power = Mathf.Clamp(power, 0.0f, this.maxPower);
+            if (fire1Up || power >= this.maxPower)
+            {
+                Debug.Log("power: " + power);
+                charge = false;
+                Destroy(this.player1.Fire(this.bulletPrefab, power), this.bulletTimeToLive);
+                this.power = 0;
+            }
         }
 
-        if (fire1Up) {
-            Debug.Log("power: " + power);
-            charge = false;
-            Destroy(this.player1.Fire(this.bulletPrefab, power), this.bulletTimeToLive);
-        }
+        
     }
 }
