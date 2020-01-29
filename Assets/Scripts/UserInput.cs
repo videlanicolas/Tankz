@@ -16,7 +16,7 @@ public class UserInput : MonoBehaviour
     public float speed = 0.1f;
     [Range(1.0f, 10.0f)]
     public float powerMultiplier = 8.0f;
-    public float bulletTimeToLive = 10.0f;
+    public float bulletTimeToLive = 60.0f;
     [Range(1.0f, 10.0f)]
     public float maxPower = 10.0f;
     [Space]

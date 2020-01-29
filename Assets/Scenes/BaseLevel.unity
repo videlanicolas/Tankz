@@ -451,13 +451,13 @@ MonoBehaviour:
   tankPrefab: {fileID: 1354214981}
   tankBarrel: {fileID: 2133419987}
   tankPivot: {fileID: 1011825602}
-  bulletPrefab: {fileID: 8195165785271972874, guid: 2fc0be62ca369be47935555073f8e5cf,
+  bulletPrefab: {fileID: 1095044652569732182, guid: 2fc0be62ca369be47935555073f8e5cf,
     type: 3}
   bulletSpawn: {fileID: 210607555}
   speed: 0.1
-  bulletTimeToLive: 10
-  lowLimit: -45
-  highLimit: 0
+  powerMultiplier: 8
+  bulletTimeToLive: 60
+  maxPower: 10
 --- !u!4 &864449510
 Transform:
   m_ObjectHideFlags: 0
@@ -518,7 +518,7 @@ GameObject:
   - component: {fileID: 1249694823}
   m_Layer: 0
   m_Name: Floor
-  m_TagString: Untagged
+  m_TagString: Floor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
