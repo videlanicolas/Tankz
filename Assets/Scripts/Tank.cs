@@ -2,23 +2,56 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tank : ScriptableObject
+public class Tank : MonoBehaviour
 {
+    public GameObject bulletPrefab;
+
     private GameObject hull, barrel;
     private Transform pivot, spawnPoint;
+    private bool charge = false;
+    private float power = 0f,
+                  maxPower = 10f,
+                  powerMultiplier = 8f,
+                  forward = 1f;
 
-    public Tank(GameObject gameObject, GameObject barrel, Transform pivot, Transform spawnPoint) {
-        if (gameObject == null) this.hull = GameObject.FindGameObjectWithTag("Player");
-        else this.hull = gameObject;
+    private void Awake()
+    {
+        hull = gameObject;
+        pivot = gameObject.transform.GetChild(3).gameObject.transform;
+        barrel = pivot.GetChild(0).gameObject;
+        spawnPoint = barrel.transform.GetChild(0).transform;
 
-        if (pivot == null) this.pivot = GameObject.FindGameObjectWithTag("Player1Pivot").transform;
-        else this.pivot = pivot;
+        forward = ((gameObject.transform.GetChild(4).gameObject.transform.position - hull.transform.position).x > 0) ? 1f : -1f;
+    }
 
-        if (spawnPoint == null) this.spawnPoint = GameObject.FindGameObjectWithTag("Player1Spawn").transform;
-        else this.spawnPoint = spawnPoint;
+    void Operate()
+    {
+        float horizontalButton = Input.GetAxis("Horizontal");
+        float verticalButton = Input.GetAxis("Vertical");
+        bool fire1Down = Input.GetButtonDown("Fire1"),
+             fire1Up = Input.GetButtonUp("Fire1");
 
-        if (barrel == null) this.barrel = GameObject.FindGameObjectWithTag("Player1Barrel");
-        else this.barrel = barrel;
+        this.Move(forward * horizontalButton * 0.1f);
+        this.Aim(forward * verticalButton);
+
+        if (fire1Down)
+        {
+            charge = true;
+        }
+
+        if (charge)
+        {
+            power += Time.deltaTime * powerMultiplier;
+            power = Mathf.Clamp(power, 0.0f, maxPower);
+            if (fire1Up || power >= maxPower)
+            {
+                charge = false;
+                Debug.Log("Bullet fired with power: " + power);
+                GameObject bullet = Fire(bulletPrefab, power);
+                power = 0;
+                this.SendMessageUpwards("PlayerEndTurn", bullet, SendMessageOptions.RequireReceiver);
+            }
+        }
     }
 
     public void Move(float translate) {
