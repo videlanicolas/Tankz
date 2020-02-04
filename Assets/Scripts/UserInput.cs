@@ -20,7 +20,7 @@ public class UserInput : MonoBehaviour
 {
     public GameObject tankPrefab;
 
-    private GameObject player1, player2;
+    private GameObject player1, player2, bullet;
     private bool charge = false;
     private float power = 1.0f,
                   thresholdSpeed = 0.001f,
@@ -42,7 +42,11 @@ public class UserInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GameObject bullet = null;
+        float horizontalButton = Input.GetAxis("Horizontal");
+        float verticalButton = Input.GetAxis("Vertical");
+        bool fire1Down = Input.GetButtonDown("Fire1"),
+             fire1Up = Input.GetButtonUp("Fire1");
+
         if (prevState != state) {
             prevState = state;
             Debug.Log("State: " + state);
@@ -50,12 +54,15 @@ public class UserInput : MonoBehaviour
 
         switch (state) {
             case State.Player1Turn:
-                this.player1.SendMessage("Operate");
+                bullet = player1.GetComponent<Tank>().Operate(horizontalButton, verticalButton, fire1Down, fire1Up);
+                if (bullet != null) state = State.Fired;
                 break;
             case State.Player2Turn:
-                this.player2.SendMessage("Operate");
+                bullet = player2.GetComponent<Tank>().Operate(horizontalButton, verticalButton, fire1Down, fire1Up);
+                if (bullet != null) state = State.Fired;
                 break;
             case State.Fired:
+                if (bullet == null) state = State.WaitingForThingsToStop;
                 break;
             case State.WaitingForThingsToStop:
                 if (CheckIfThingsStoppedMoving()) {
@@ -76,21 +83,6 @@ public class UserInput : MonoBehaviour
                 Debug.LogError("Unknown state " + state);
                 break;
         }
-    }
-
-    IEnumerator WaitForBulletDestroyed(GameObject bullet) {
-        yield return bullet != null;
-        // Bullet got destroyed
-        state = State.WaitingForThingsToStop;
-        
-        // Stop coroutine
-        yield break;
-    }
-
-    void PlayerEndTurn(GameObject bullet) {
-        state = State.Fired;
-        Destroy(bullet, this.bulletTimeToLive);
-        StartCoroutine(WaitForBulletDestroyed(bullet));
     }
 
     bool CheckIfThingsStoppedMoving() {

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Tank : MonoBehaviour
 {
     public GameObject bulletPrefab;
+    public float bulletTTL = 60f;
 
     private GameObject hull, barrel;
     private Transform pivot, spawnPoint;
@@ -24,13 +25,8 @@ public class Tank : MonoBehaviour
         forward = ((gameObject.transform.GetChild(4).gameObject.transform.position - hull.transform.position).x > 0) ? 1f : -1f;
     }
 
-    void Operate()
+    public GameObject Operate(float horizontalButton, float verticalButton, bool fire1Down, bool fire1Up)
     {
-        float horizontalButton = Input.GetAxis("Horizontal");
-        float verticalButton = Input.GetAxis("Vertical");
-        bool fire1Down = Input.GetButtonDown("Fire1"),
-             fire1Up = Input.GetButtonUp("Fire1");
-
         this.Move(forward * horizontalButton * 0.1f);
         this.Aim(forward * verticalButton);
 
@@ -49,9 +45,10 @@ public class Tank : MonoBehaviour
                 Debug.Log("Bullet fired with power: " + power);
                 GameObject bullet = Fire(bulletPrefab, power);
                 power = 0;
-                this.SendMessageUpwards("PlayerEndTurn", bullet, SendMessageOptions.RequireReceiver);
+                return bullet;
             }
         }
+        return null;
     }
 
     public void Move(float translate) {
@@ -71,6 +68,7 @@ public class Tank : MonoBehaviour
         bullet.GetComponent<Rigidbody>().AddForce(
             power * (this.spawnPoint.position - this.pivot.position),
             ForceMode.Impulse);
+        Destroy(bullet, bulletTTL);
         return bullet;
     }
 }
