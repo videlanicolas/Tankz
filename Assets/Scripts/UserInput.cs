@@ -21,10 +21,7 @@ public class UserInput : MonoBehaviour
     public GameObject tankPrefab;
 
     private GameObject player1, player2, bullet;
-    private bool charge = false;
-    private float power = 1.0f,
-                  thresholdSpeed = 0.001f,
-                  bulletTimeToLive = 60f;
+    private float thresholdSpeed = 0.001f;
     private State state = State.Menu, prevState = State.Menu;
     private Turn turn = Turn.Player1;
 
@@ -32,8 +29,8 @@ public class UserInput : MonoBehaviour
     void Start()
     {
 
-        this.player1 = Instantiate(this.tankPrefab, new Vector3(-40f, -6f), new Quaternion(0, 0, 0, 0), this.transform);
-        this.player2 = Instantiate(this.tankPrefab, new Vector3(40f, -6f), Quaternion.Euler(180, 0, 180), this.transform);
+        this.player1 = Instantiate(this.tankPrefab, new Vector3(-40f, -6f), new Quaternion(0, 0, 0, 0));
+        this.player2 = Instantiate(this.tankPrefab, new Vector3(40f, -6f), Quaternion.Euler(180, 0, 180));
 
         //After Menu, it's player1 turn
         state = State.Player1Turn;
