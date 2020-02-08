@@ -9,6 +9,9 @@ TagManager:
   - Player1Spawn
   - Floor
   - Canvas
+  - MenuPanel
+  - Player1Life
+  - Player2Life
   layers:
   - Default
   - TransparentFX

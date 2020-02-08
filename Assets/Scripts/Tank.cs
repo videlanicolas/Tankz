@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class Tank : MonoBehaviour
@@ -7,13 +8,19 @@ public class Tank : MonoBehaviour
     public GameObject bulletPrefab;
     public float bulletTTL = 60f;
 
-    private GameObject hull, barrel;
+    private GameObject hull, barrel, lifeUI;
     private Transform pivot, spawnPoint;
     private bool charge = false;
     private float power = 0f,
                   maxPower = 10f,
                   powerMultiplier = 8f,
-                  forward = 1f;
+                  forward = 1f,
+                  life = 100f;
+
+    public void SetLifeUI(string tag)
+    {
+        lifeUI = GameObject.FindGameObjectWithTag(tag);
+    }
 
     private void Awake()
     {
@@ -23,6 +30,11 @@ public class Tank : MonoBehaviour
         spawnPoint = barrel.transform.GetChild(0).transform;
 
         forward = ((gameObject.transform.GetChild(4).gameObject.transform.position - hull.transform.position).x > 0) ? 1f : -1f;
+    }
+
+    private void Update()
+    {
+        lifeUI.GetComponent<Slider>().value = life;
     }
 
     public GameObject Operate(float horizontalButton, float verticalButton, bool fire1Down, bool fire1Up)
@@ -60,6 +72,12 @@ public class Tank : MonoBehaviour
                 this.pivot.position,
                 Vector3.forward,
                 angle: speed);
+    }
+
+    public void Hit()
+    {
+        life -= 10f;
+        
     }
 
     public GameObject Fire(GameObject bulletPrefab, float power) {

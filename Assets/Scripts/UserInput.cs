@@ -32,6 +32,9 @@ public class UserInput : MonoBehaviour
         this.player1 = Instantiate(this.tankPrefab, new Vector3(-40f, -6f), new Quaternion(0, 0, 0, 0));
         this.player2 = Instantiate(this.tankPrefab, new Vector3(40f, -6f), Quaternion.Euler(180, 0, 180));
 
+        player1.GetComponent<Tank>().SetLifeUI("Player1Life");
+        player2.GetComponent<Tank>().SetLifeUI("Player2Life");
+
         //After Menu, it's player1 turn
         state = State.Player1Turn;
     }
