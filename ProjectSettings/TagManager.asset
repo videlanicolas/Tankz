@@ -12,6 +12,8 @@ TagManager:
   - MenuPanel
   - Player1Life
   - Player2Life
+  - Player2Power
+  - Player1Power
   layers:
   - Default
   - TransparentFX

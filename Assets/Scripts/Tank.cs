@@ -7,19 +7,23 @@ public class Tank : MonoBehaviour
 {
     public GameObject bulletPrefab;
     public float bulletTTL = 60f;
+    public Color startColor = Color.cyan,
+                 endColor = Color.red;
 
-    private GameObject hull, barrel, lifeUI;
+    private GameObject hull, barrel, lifeUI, powerUI;
     private Transform pivot, spawnPoint;
     private bool charge = false;
     private float power = 0f,
                   maxPower = 10f,
                   powerMultiplier = 8f,
                   forward = 1f,
+                  maxLife,
                   life = 100f;
 
-    public void SetLifeUI(string tag)
+    public void SetPlayerNumber(int number)
     {
-        lifeUI = GameObject.FindGameObjectWithTag(tag);
+        lifeUI = GameObject.FindGameObjectWithTag("Player" + number + "Life");
+        powerUI = GameObject.FindGameObjectWithTag("Player" + number + "Power");
     }
 
     private void Awake()
@@ -28,15 +32,21 @@ public class Tank : MonoBehaviour
         pivot = gameObject.transform.GetChild(3).gameObject.transform;
         barrel = pivot.GetChild(0).gameObject;
         spawnPoint = barrel.transform.GetChild(0).transform;
+        maxLife = life;
 
         forward = ((gameObject.transform.GetChild(4).gameObject.transform.position - hull.transform.position).x > 0) ? 1f : -1f;
     }
 
     private void Update()
     {
-        lifeUI.GetComponent<Slider>().value = life;
+        lifeUI.GetComponent<Slider>().value = (float)(life*100/maxLife);
+        powerUI.GetComponent<Slider>().value = (float)(power*100/maxPower);
+        powerUI.transform.Find("Fill Area").Find("Fill").GetComponent<Image>().color = GetPowerColor();
     }
 
+    private Color GetPowerColor() {
+        return Color.Lerp(startColor, endColor, (float)(power / maxPower));
+    }
     public GameObject Operate(float horizontalButton, float verticalButton, bool fire1Down, bool fire1Up)
     {
         this.Move(forward * horizontalButton * 0.1f);
@@ -77,7 +87,6 @@ public class Tank : MonoBehaviour
     public void Hit()
     {
         life -= 10f;
-        
     }
 
     public GameObject Fire(GameObject bulletPrefab, float power) {
